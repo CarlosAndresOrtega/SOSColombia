@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#SoSColombia</title>
+    <link rel="stylesheet" href="public/css/main.css">
+</head>
+
+<body>
+    <script>
+        const storage = window.localStorage;
+          if (!storage) {
+            alert("Se require un navegador que soporte Local Storage");
+            goToLogin();
+          }
+        const sessionUsername = localStorage.getItem('username');
+  
+        function checkUser(){
+          if (!sessionUsername) {
+            goToLogin();
+          }
+        }
+  
+        function goToLogin() {
+          window.location.href = "./login";
+        }
+        checkUser();
+      </script>
+    <header>
+        <marquee >
+            #SoSColombia
+        </marquee>
+    </header>
+    <div id="content">
+        <div id="left">
+            <input onkeyup="updateUsername()"
+            id="username" type="text" placeholder="username">
+            <textarea name="" id="msg" cols="30" rows="10"></textarea>
+            <div>Selecciona un canal</div>
+            <select name="" id="channels">
+                <option value="all">Todos los usuarios</option>
+            </select>
+            <button onclick="Publish()">Publicar</button>
+            <div>Usuarios conectados</div>
+            <ul id="users"></ul>
+        </div>
+        <div id="right">
+            <ul></ul>
+        </div>
+    </div>
+    <h1>Sos Colombia</h1>
+    <script src="/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script>
+        var socket = io();
+        const msg = document.getElementById("msg");
+        const msgArea = document.querySelector("#right ul");
+        const username = document.getElementById('username');
+        const usersArea = document.getElementById("users");
+        const channels = document.getElementById("channels");
+
+        username.value= sessionUsername;
+
+
+        socket.on('published-msg', (msg) =>{
+            const li = document.createElement("li");
+            li.innerText = `${msg.autor} dijo: ${msg.content}`;
+            msgArea.appendChild(li);
+        });
+        socket.on('user-disconnected', (id)=>{
+            const userEl = document.querySelector("#u-"+id);
+            if(userEl){
+                usersArea.removeChild(userEl);
+            }
+
+            const channelEl = document.querySelector("#c-"+id);
+            if(channelEl){
+                channels.removeChild(channelEl);
+            }
+        })
+        socket.on('username-update', (users)=>{
+            const usersIds = Object.keys(users);
+            usersIds.forEach(userId => {
+                const oldUser= document.querySelector("#u-"+userId);
+
+                if(oldUser){
+                    const name = users[userId].username == "" ? "Guest" : users[userId].username;
+                    const channel= channels.querySelector("#c-"+ userId);
+                    channel.innerText = name;
+                    oldUser.innerText = name;
+                }else{
+                    const name = users[userId].username == "" ? "Guest" : users[userId].username;
+                    const li = document.createElement("li");
+                    li.id = "u-"+userId;
+                    li.innerText = name;
+                    usersArea.appendChild(li);
+
+                    const channel= document.createElement("option");
+                    channel.id = "c-"+userId;
+                    channel.innerText = name;
+                    channel.value = userId;
+                    channels.appendChild(channel);
+                }
+                // const li = document.createElement("li");
+            });
+        })
+        function Publish(){
+            if(msg.value){
+                socket.emit('publish-msg', {
+                    autor: username.value,
+                    content: msg.value,
+                    channel: channels.value
+                })
+                msg.value="";
+            }
+        }
+        function updateUsername(){
+            if(username.value){
+                socket.emit('username-update', username.value)
+                msg.value="";
+            }
+        }
+        
+    </script>
+</body>
+
+</html>

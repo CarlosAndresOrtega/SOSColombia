@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="public/css/register.css">
+    <!-- <script type ="module"src="../ts/registerController.ts"></script> -->
+</head>
+
+<body>
+    <div class="Register">
+        <h1>Register</h1>
+        <!-- <form> -->
+        <!-- <form method="POST" action="public/ts/registerController.ts"> -->
+        <input id="username" type="text" placeholder="Usuario" required="required" />
+        <input id="name" type="text" placeholder="Nombre" required="required" />
+        <input id="lname" type="text" placeholder="Apellido" required="required" />
+        <input id="email" type="text" placeholder="Correo" required="required" />
+        <input id="password" type="password" placeholder="Contraseña" required="required" />
+        <input id="Vpassword" type="password" placeholder="Verificar contraseña" required="required" />
+        <button onclick="registrar()" class="btn btn-primary btn-block btn-large">Register</button><br>
+        <button onclick="goToLogin()" class="btn btn-primary btn-block btn-large">Login</button><br>
+        <!-- <button onclick="Prueba()"class="btn btn-primary btn-block btn-large">Prueba</button> -->
+        <!-- </form> -->
+    </div>
+    <script src="/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script>
+        var socket = io();
+        // import { ObjectId } from "mongoose";
+        // socket.on('prueba-realizada',(texto)=>{
+        //     console.log(texto);
+        // })
+        socket.on('registered', username => {
+            // alert("ya lo registramos");
+            window.location.href = "/";
+        });
+        socket.on('error', msg => {
+            alert(msg);
+            // window.location.href = "/";
+        });
+        function goToLogin() {
+            window.location.href = "./login";
+        }
+        function registrar() {
+            const Username = document.getElementById("username");
+            const name = document.getElementById("name");
+            const lname = document.getElementById("lname");
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+            const Vpassword = document.getElementById("Vpassword");
+            const data = {
+                Username: Username.value,
+                name: name.value,
+                lname: lname.value,
+                email: email.value,
+                password: password.value,
+            }
+            // console.log({data});
+            // console.log(data.Username.length);
+            // const storage = window.localStorage;
+            // if (!storage) alert("Se require un navegador que soporte Local Storage");
+            // storage.setItem('username', Username.value);
+            // Validaciones(data); 
+
+
+
+
+            if (password.value == Vpassword.value) {
+                if (this.Validaciones(data) == "OK") {
+                    socket.emit('register-user', data);
+                }else{
+                    alert(this.Validaciones(data));
+                }
+            } else {
+                alert("Las contraseñas no coinciden");
+            }
+
+        }
+        function Validaciones(data) {
+            console.log("Validando...");
+            // console.log(data.Username);
+            // console.log(data.Username.length);
+            //email
+            if (data.email.includes("@")) {
+                // console.log("incluye @");
+                if (data.email.indexOf("@") != 0) {
+                    // console.log("hay algo antes del @");
+                    if (data.email.includes(".")) {
+                        // console.log("Incluye .");
+                        if (data.email.indexOf(".") - data.email.indexOf("@") == 1) {
+                            return "Digite un dominio de correo válido";
+                        } else {
+                            // console.log("El dominio es valido");
+                            if (data.email.lastIndexOf(".") < data.email.length - 1) {
+                                if (data.email.includes(' ')) {
+                                    return "El correo no debe tener espacios";
+                                } else {
+                                    console.log(data.Username);
+                                    console.log(data.Username.length);
+                                    // if (data.Username.length > 20 || data.username.length < 6) {
+                                    //     return "El username debe tener minimo 6 caracteres y máximo 20 caracteres";
+                                    // } else {
+                                        if (data.password.length < 6) {
+                                            return "La contraseña debe contener minimo 6 caracteres";
+                                        } else {
+                                            for (let i = 0; i < data.name.length; i++) {
+                                                if (data.name[i].toUpperCase() == data.name[i].toLowerCase() && data.name[i] != " ") {
+                                                    return "El nombre no debe tener numeros ni simbolos, solo letras y/o espacios";
+                                                }
+                                            }
+                                            for (let i = 0; i < data.lname.length; i++) {
+                                                if (data.lname[i].toUpperCase() == data.lname[i].toLowerCase() && data.lname[i] != " ") {
+                                                    return "El apellido no debe tener numeros ni simbolos, solo letras y/o espacios";
+                                                }
+                                            }
+                                            return "OK";
+                                        }
+                                    // }
+                                    console.log("Todo correcto");
+                                    // console.log("Esta bien");
+                                }
+                            } else {
+                                return "Digite un servidor valido para el correo example@correo.es";
+                            }
+                        }
+                    } else {
+                        return "El correo debe incluir .";
+                    }
+                } else {
+                    return "el correo debe tener algo antes del @";
+                }
+            } else {
+                return "el correo no incluye @";
+            }
+            //fin validacion correo
+            //validacion username
+
+            //fin validacion username
+            // validacion password
+
+            //fin de contraseña
+            //validacion nombre
+
+            // fin validacion nombre
+            // validacion apellido
+
+            //fin validacion apellido
+            // validacion telefono
+            // if (user.telefono.length > 20 || user.telefono.length < 7) {
+            //     return "El telefono debe contener minimo 7 cifras o máximo 20";
+            // } else {
+            //     for (let i = 0; i < user.telefono.length; i++) {
+            //         if (Number.isNaN(parseInt(user.telefono[i])) == true && user.telefono[i] != "+") {
+            //             return "El telefono no debe tener letras ni simbolos, solo numeros (se vale el '+' en caso del codigo internacional)";
+            //         }
+            //     }
+            // }
+            // return "Contacte con los desarrolladores, los campos estan bien";
+
+        }
+        // function Prueba(){
+        //     const text1 = "esta es el consolazo de la prueba";
+        //     socket.emit('prueba-enviada',text1);
+        // }
+
+    </script>
+</body>
+
+</html>
