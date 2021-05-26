@@ -10,6 +10,7 @@ const UserService = {
         // console.log("Esta es la informacion de la data:");
         // console.log({user});
         const query3 = await User.findOne({ Username: user.Username});
+        // await User.where({ Username: user.Username }).update({ $set: { _id:id } });
         console.log({query3});
 
         if(query3!=null){
@@ -38,7 +39,7 @@ const UserService = {
     },
     login: async(data:any, id:any)=>{
         const user= data;
-        console.log({data});
+        console.log("lo llamas 2 veces???",{data});
 
         const query3 = await User.findOne({ Username: user.Username, password: user.Password});
 
@@ -48,10 +49,24 @@ const UserService = {
         if(query3==null){
             return "Su usuario no esta registrado, por favor registrese";
         }else{
-            // await User.where({ Username: user.Username }).update({ $set: { _id:id } });
+            
+            // await User.where({ Username: user.Username }).update({ $set: { idSocket:id } });
             return {query3};
         }
         
+    },
+    id: async(data:any,id:any)=>{
+        console.log("la data que llega al id",{data});
+        console.log("este es el id en chat", {id});
+        
+        const user= await User.where({ Username: data }).update({ $set: { idSocket:id }});
+        console.log("Actualizacion del id en chat ",{user})
+        if(user){
+            return user;
+
+        }else{
+            return "no existe";
+        }
     }
     
     

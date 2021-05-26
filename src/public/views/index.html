@@ -25,7 +25,7 @@
         // }
 
         // function goToLogin() {
-        //     window.location.href = "./login";
+        //     window.location.href = "./";
         // }
         // checkUser();
     </script>
@@ -64,10 +64,21 @@
         // socket.on('prueba-realizada',(texto)=>{
         //     console.log(texto);
         // })
-        
-        username.value=sessionUsername;
+
+        username.value = sessionUsername;
         updateUsername();
-        
+        id_actualizado();
+
+        console.log(window.location.href);
+
+        function id_actualizado() {
+            console.log("Estamos entrando");
+            socket.emit('id-nuevo', username.value);
+        }
+
+        socket.on('borrar-local', (user) => {
+            // storage.removeItem(`username`);
+        });
         socket.on('published-msg', (msg) => {
             const li = document.createElement("li");
             li.innerText = `${msg.autor} dijo: ${msg.content}`;
@@ -83,11 +94,11 @@
             if (channelEl) {
                 channels.removeChild(channelEl);
             }
-            
+
         });
         socket.on('username-update', (users) => {
             const usersIds = Object.keys(users);
-            console.log({usersIds});
+            // console.log({ usersIds });
             usersIds.forEach(userId => {
                 const oldUser = document.querySelector("#u-" + userId);
 

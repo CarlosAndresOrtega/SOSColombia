@@ -18,6 +18,9 @@ const UserSchema = new Schema(
         password:{
             type: String
         },
+        idSocket:{
+            type: String
+        },
         msg:{
             type: Array
         }

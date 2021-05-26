@@ -26,7 +26,18 @@ const UserController = {
             console.log(error.stack && error.stack || error);
             
         } 
-    }  
+    },
+    id_actualizado: async(data:any, id: any)=>{
+        try { 
+            const newid = await UserService.id(data,id);
+            const response = typeof newid === "object" ? {error: false, msg: "Usuario actualizado", data: newid} : {error: true, msg: newid};
+            return response;
+        } catch (error) {
+            console.log(error.stack && error.stack || error);
+            
+        } 
+    },
+        
 
 }
 

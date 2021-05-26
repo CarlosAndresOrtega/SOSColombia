@@ -32,8 +32,13 @@
             alert(msg);
         });
         socket.on('validado', (user => {
-            alert("Bienvenido");
-            window.location.href = "/";
+            // alert("Bienvenido");
+            const storage = window.localStorage;
+            if (!storage) alert("Se require un navegador que soporte Local Storage");
+            storage.setItem(`username`, user);
+            // window.location.href = "./";
+        
+            window.location.href = `./chat`;
         }))
 
         function Validar() {

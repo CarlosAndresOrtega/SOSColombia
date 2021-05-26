@@ -33,10 +33,10 @@ app.use('/node_modules', express.static(path.join(__dirname, '..', 'node_modules
 app.use('/public', express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/views/index.html');
-});
-app.get('/login', (req, res) => {
   res.sendFile(__dirname + '/public/views/login.html');
+});
+app.get('/chat', (req, res) => {
+  res.sendFile(__dirname + '/public/views/index.html');
 });
 app.get('/register', (req, res) => {
   res.sendFile(__dirname + '/public/views/register.html');
@@ -69,8 +69,11 @@ io.on('connection', (Socket) => {
       io.to(msg.channel).emit('published-msg', msg);
     }
   });
-  Socket.on('register-user', async (data: { Username: string, name: string, lname: string, email: string, password: string }) => {
+  Socket.on('register-user', async (data: { Username: string, name: string, lname: string, email: string, password: string, idSocket: string}) => {
 
+    // console.log({users});
+    const id= Socket.id;
+    data.idSocket= id;
     const resultado = await UserController.registar(data);
     console.log({ resultado });
 
@@ -87,13 +90,21 @@ io.on('connection', (Socket) => {
     const id= Socket.id;
     console.log("Este es el id del socket",id);
     
-    // console.log("Este es el id ",id);
     const resultado = await UserController.login(data, id);
     if(resultado?.msg=="Usuario encontrado"){ 
       io.emit('validado', data.Username);
     }else{
       io.emit('error-login', resultado?.msg);
     }
+  });
+  Socket.on('id-nuevo',async(user:string)=>{
+    console.log("estamos en el id nuevo");
+    const resultado = await UserController.id_actualizado(user,Socket.id);
+
+    if(resultado?.msg=="Usuario actualizado"){
+      Socket.emit('borrar-local', user);
+    }
+    
   });
 
 })

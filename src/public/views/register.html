@@ -35,7 +35,7 @@
         // })
         socket.on('registered', username => {
             // alert("ya lo registramos");
-            window.location.href = "/";
+            window.location.href = "./chat";
         });
         socket.on('error', msg => {
             alert(msg);
@@ -57,6 +57,7 @@
                 lname: lname.value,
                 email: email.value,
                 password: password.value,
+                idSocket:""
             }
             // console.log({data});
             // console.log(data.Username.length);
