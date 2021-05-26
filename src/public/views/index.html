@@ -87,6 +87,7 @@
         });
         socket.on('username-update', (users) => {
             const usersIds = Object.keys(users);
+            console.log({usersIds});
             usersIds.forEach(userId => {
                 const oldUser = document.querySelector("#u-" + userId);
 

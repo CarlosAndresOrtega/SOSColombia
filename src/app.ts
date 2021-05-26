@@ -1,11 +1,11 @@
 import express from 'express';
 import UserService from './public/services/UserService';
-import registerController from './public/ts/registerController';
+import UserController from './public/ts/UserController';
 const app = express();
 
 const http = require('http');
 const server = http.createServer(app);
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 const io = new Server(server);
 const path = require('path');
 const port = 3000;
@@ -71,7 +71,7 @@ io.on('connection', (Socket) => {
   });
   Socket.on('register-user', async (data: { Username: string, name: string, lname: string, email: string, password: string }) => {
 
-    const resultado = await registerController.registar(data);
+    const resultado = await UserController.registar(data);
     console.log({ resultado });
 
     // console.log("este es el id si hay conexion", Socket.id);
@@ -81,6 +81,19 @@ io.on('connection', (Socket) => {
       io.emit('registered', data.Username);
     }
 
+  });
+  Socket.on('validar-login', async (data:{Username:String,Password:String})=>{
+    console.log({data});
+    const id= Socket.id;
+    console.log("Este es el id del socket",id);
+    
+    // console.log("Este es el id ",id);
+    const resultado = await UserController.login(data, id);
+    if(resultado?.msg=="Usuario encontrado"){ 
+      io.emit('validado', data.Username);
+    }else{
+      io.emit('error-login', resultado?.msg);
+    }
   });
 
 })

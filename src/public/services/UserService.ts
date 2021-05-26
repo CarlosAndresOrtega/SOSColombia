@@ -36,8 +36,22 @@ const UserService = {
         // const query = await User.findOne({ _id: user });
         // const Sid = creditcard._id.toString();
     },
-    getOne: async(data:any)=>{
+    login: async(data:any, id:any)=>{
+        const user= data;
+        console.log({data});
 
+        const query3 = await User.findOne({ Username: user.Username, password: user.Password});
+
+        
+        console.log({query3});
+        
+        if(query3==null){
+            return "Su usuario no esta registrado, por favor registrese";
+        }else{
+            // await User.where({ Username: user.Username }).update({ $set: { _id:id } });
+            return {query3};
+        }
+        
     }
     
     

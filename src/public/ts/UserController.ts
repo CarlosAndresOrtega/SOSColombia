@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import UserService from "../services/UserService";
 // const view = require('../views/login.html');
 
-const loginController = {
+const UserController = {
 
     registar: async (data:any) => {
 
@@ -17,10 +17,10 @@ const loginController = {
             
         }
     },
-    getOne: async(data:any)=>{
+    login: async(data:any, id: any)=>{
         try { 
-            const newUser = await UserService.getOne(data);
-            const response = typeof newUser === "object" ? {error: false, msg: "Registro creado con exito", data: newUser} : {error: true, msg: newUser};
+            const newUser = await UserService.login(data,id);
+            const response = typeof newUser === "object" ? {error: false, msg: "Usuario encontrado", data: newUser} : {error: true, msg: newUser};
             return response;
         } catch (error) {
             console.log(error.stack && error.stack || error);
@@ -30,4 +30,4 @@ const loginController = {
 
 }
 
-export default loginController;
+export default UserController;

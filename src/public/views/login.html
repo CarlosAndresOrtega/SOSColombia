@@ -14,22 +14,46 @@
 <body>
     <div class="login">
         <h1>Login</h1>
-        <form >
-            <input id="Username" type="text" name="u" placeholder="Username" required="required" />
-            <input id="Password" type="password" name="p" placeholder="Password" required="required" />
-            <button onclick="Validar()" class=" btn btn-primary btn-block btn-large">Entrar</button><br>
-            <button onclick="goToRegister()" class="btn btn-primary btn-block btn-large">Register</button>
-        </form>
+        <!-- <form > -->
+        <input id="Username" type="text" name="u" placeholder="Username" required="required" />
+        <input id="Password" type="password" name="p" placeholder="Password" required="required" />
+        <button onclick="Validar()" class=" btn btn-primary btn-block btn-large">Entrar</button><br>
+        <button onclick="goToRegister()" class="btn btn-primary btn-block btn-large">Register</button>
+        <!-- </form> -->
     </div>
 
     <!-- <h1>Login</h1>
     <button onclick="saveAndGo()">Login as Pabhoz</button> -->
+    <script src="/node_modules/socket.io-client/dist/socket.io.js"></script>
     <script>
+        var socket = io();
+
+        socket.on('error-login', (msg) => {
+            alert(msg);
+        });
+        socket.on('validado', (user => {
+            alert("Bienvenido");
+            window.location.href = "/";
+        }))
 
         function Validar() {
-            const Username = document.getElementById("username");
+            const Username = document.getElementById("Username");
+            const Password = document.getElementById("Password");
 
-            console.log("este es el nombre "+ Username);
+            data = {
+                Username: Username.value,
+                Password: Password.value
+            };
+
+            // console.log(data.password.length);
+
+            if (data.Password.length < 6) {
+                alert("La contraseña debe contener minimo 6 caracteres");
+            } else {
+                socket.emit('validar-login', data);
+                // console.log("este es el nombre "+ Username.value);
+            }
+
         }
         function goToRegister() {
             window.location.href = "./register";
