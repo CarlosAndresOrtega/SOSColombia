@@ -82,9 +82,9 @@ io.on('connection', (Socket) => {
 
     // console.log("este es el id si hay conexion", Socket.id);
     if(resultado?.msg=="El usuario ya esta registrado"){ 
-      io.emit('error', resultado.msg);
+      Socket.emit('error', resultado.msg);
     }else{
-      io.emit('registered', data.Username);
+      Socket.emit('registered', data.Username);
     }
 
   });
@@ -95,9 +95,9 @@ io.on('connection', (Socket) => {
     
     const resultado = await UserController.login(data, id);
     if(resultado?.msg=="Usuario encontrado"){ 
-      io.emit('validado', data.Username);
+      Socket.emit('validado', data.Username);
     }else{
-      io.emit('error-login', resultado?.msg);
+      Socket.emit('error-login', resultado?.msg);
     }
   });
   Socket.on('id-nuevo',async(user:string)=>{
