@@ -18,25 +18,26 @@
         }
         const sessionUsername = localStorage.getItem('username');
 
-        // function checkUser() {
-        //     if (!sessionUsername) {
-        //         goToLogin();
-        //     }
-        // }
+        function checkUser() {
+            if (!sessionUsername) {
+                goToLogin();
+            }
+        }
 
-        // function goToLogin() {
-        //     window.location.href = "./";
-        // }
-        // checkUser();
+        function goToLogin() {
+            window.location.href = "./";
+        }
+        checkUser();
     </script>
     <header>
+        <button id="logout" class="btn btn-success" onclick="Logout()" >Salir</button>
         <marquee>
             #SoSColombia
         </marquee>
     </header>
     <div id="content">
         <div id="left">
-            <input onkeyup="updateUsername()" id="username" type="text" placeholder="username">
+            <input onkeyup="updateUsername()" id="username" type="text" placeholder="username" readonly>
             <textarea name="" id="msg" cols="30" rows="10"></textarea>
             <div>Selecciona un canal</div>
             <select name="" id="channels">
@@ -88,6 +89,7 @@
             const userEl = document.querySelector("#u-" + id);
             if (userEl) {
                 usersArea.removeChild(userEl);
+                // storage.removeItem(`username`);
             }
 
             const channelEl = document.querySelector("#c-" + id);
@@ -138,6 +140,10 @@
                 socket.emit('username-update', username.value);
                 msg.value = "";
             }
+        }
+        function Logout(){
+            storage.removeItem(`username`);
+            window.location.href = "./";
         }
         // function Prueba(){
         //     const text1 = "esta es el consolazo de la prueba";

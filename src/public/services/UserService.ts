@@ -67,6 +67,44 @@ const UserService = {
         }else{
             return "no existe";
         }
+    },
+    añadir_msg: async(data:any, users:any)=>{
+
+        console.log("pushando el msg", {data});
+        const objecto = {
+            // autor: data.autor,
+            channel: data.channel,
+            msg: data.content
+        };
+        const objecto2 = {
+            channel: data.autor,
+            msg: data.content
+        }
+        if(data.channel=="all"){
+            //agregarle al autor en los enviados
+            await User.where({ Username: data.autor }).update({ $push: { MsgEnviados:objecto } });
+            console.log("estos son los usuarios conectados",{users});
+            
+            //agregarle a los demas en os recibidos
+            const usersIds = Object.keys(users);
+            
+            usersIds.forEach( async userId => {
+                const query2 = await User.findOne({ idSocket: userId});
+                // objecto.channel= query2.Username;
+                if(query2.Username!=data.autor){
+                    await User.where({ Username: query2.Username }).update({ $push: { MsgRecibidos:objecto2 } });
+                }
+            });
+        }else{
+            const query3 = await User.findOne({ idSocket: data.channel});
+            objecto.channel= query3.Username;
+
+            await User.where({ Username: data.autor }).update({ $push: { MsgEnviados:objecto } });
+
+            // objecto.channel= query3.Username;
+
+            await User.where({ Username: objecto.channel }).update({ $push: { MsgRecibidos: objecto2 } });
+        }
     }
     
     

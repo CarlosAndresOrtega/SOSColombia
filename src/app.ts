@@ -62,13 +62,16 @@ io.on('connection', (Socket) => {
     delete users[Socket.id];
     io.emit('user-disconnected', Socket.id);
   });
-  Socket.on('publish-msg', (msg: { autor: string, content: string, channel: string }) => {
+  Socket.on('publish-msg', async (msg: { autor: string, content: string, channel: string }) => {
     if (msg.channel == "all") {
+      const resultado = await UserController.añadir_msg(msg, users);
       io.emit('published-msg', msg);
     } else {
-      io.to(msg.channel).emit('published-msg', msg);
+      const resultado = await UserController.añadir_msg(msg,users);
+      io.to(msg.channel).emit('published-msg', msg);  
     }
   });
+
   Socket.on('register-user', async (data: { Username: string, name: string, lname: string, email: string, password: string, idSocket: string}) => {
 
     // console.log({users});

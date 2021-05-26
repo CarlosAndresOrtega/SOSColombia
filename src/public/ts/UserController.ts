@@ -37,6 +37,16 @@ const UserController = {
             
         } 
     },
+    añadir_msg: async(data:any, users:any)=>{
+        try { 
+            const newid = await UserService.añadir_msg(data, users);
+            const response = typeof newid === "object" ? {error: false, msg: "Usuario actualizado", data: newid} : {error: true, msg: newid};
+            return response;
+        } catch (error) {
+            console.log(error.stack && error.stack || error);
+            
+        } 
+    }
         
 
 }

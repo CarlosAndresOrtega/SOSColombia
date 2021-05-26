@@ -21,7 +21,10 @@ const UserSchema = new Schema(
         idSocket:{
             type: String
         },
-        msg:{
+        MsgEnviados:{
+            type: Array
+        },
+        MsgRecibidos:{
             type: Array
         }
 

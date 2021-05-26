@@ -21,8 +21,8 @@
         <input id="email" type="text" placeholder="Correo" required="required" />
         <input id="password" type="password" placeholder="Contraseña" required="required" />
         <input id="Vpassword" type="password" placeholder="Verificar contraseña" required="required" />
-        <button onclick="registrar()" class="btn btn-primary btn-block btn-large">Register</button><br>
-        <button onclick="goToLogin()" class="btn btn-primary btn-block btn-large">Login</button><br>
+        <button onclick="registrar()" class="btn btn-primary btn-block btn-large">Registrar</button><br>
+        <button onclick="goToLogin()" class="btn btn-primary btn-block btn-large">Ingresar</button><br>
         <!-- <button onclick="Prueba()"class="btn btn-primary btn-block btn-large">Prueba</button> -->
         <!-- </form> -->
     </div>
@@ -35,6 +35,9 @@
         // })
         socket.on('registered', username => {
             // alert("ya lo registramos");
+            const storage = window.localStorage;
+            if (!storage) alert("Se require un navegador que soporte Local Storage");
+            storage.setItem(`username`, username);
             window.location.href = "./chat";
         });
         socket.on('error', msg => {
@@ -42,7 +45,7 @@
             // window.location.href = "/";
         });
         function goToLogin() {
-            window.location.href = "./login";
+            window.location.href = "./";
         }
         function registrar() {
             const Username = document.getElementById("username");
